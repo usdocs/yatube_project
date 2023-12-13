@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}
+  {% if username.first_name or username.last_name %}
+  Профайл пользователя {{ username.get_full_name }}
+  {% else %}
+  Профайл пользователя {{ username }}
+  {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="mb-5">
+    {% if username.first_name or username.last_name %}
+    <h1>Все посты пользователя {{ username.get_full_name }}</h1>
+    {% else %}
+    <h1>Все посты пользователя {{ username }}</h1>
+    {% endif %}
+    <h3>Всего постов: {{ username.posts.count }} </h3>
+    {% include 'posts/includes/follow.html' %}
+  </div>
+  {% for post in page_obj %}
+    {% with grouptrue=True %}
+      {% include 'posts/includes/post.html' %} 
+    {% endwith %}
+    {% if post.group %}
+          <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
+    {% endif %}
+    {% if not forloop.last %}<hr>{% endif %}
+  {% endfor %}
+  {% include 'posts/includes/paginator.html' %}
+</div>
+{% endblock %}
